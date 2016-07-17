@@ -1,1 +1,24 @@
-%h1 Hello!
+.container
+  .row
+    .col-sm-12
+      %table.table
+        %thead.thead-inverse
+          %tr
+            %th #
+            %th Date
+            %th Jobs DB tech
+            %th Jobs DB total
+            %th SET Index
+        %tbody
+          - @entries.each_with_index do |entry, index|
+            %tr
+              %th{scope: "row"}
+                = index + 1
+              %td
+                = entry.created_at.strftime("%B %d, %Y")
+              %td
+                = number_with_delimiter(entry.jobs_db_tech)
+              %td
+                = number_with_delimiter(entry.jobs_db_total)
+              %td
+                = number_with_delimiter(entry.set_index)
