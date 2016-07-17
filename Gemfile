@@ -18,6 +18,7 @@ gem 'jbuilder', '~> 2.0'
 gem 'sdoc', '~> 0.4.0', group: :doc
 gem 'rest-client'
 gem 'nokogiri'
+gem 'haml', '~> 4.0.7'
 
 group :test do
   gem 'factory_girl_rails'
