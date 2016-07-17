@@ -19,6 +19,13 @@ namespace :crawler do
       jobs_db_tech.css('span#firstLineCriteriaContainer em')[0].text.to_i
     entry.jobs_db_tech = jobs_db_tech_count
 
+    set_index_url = "http://marketdata.set.or.th/mkt/sectorialindices.do"
+    set_index_html = Nokogiri::HTML(RestClient.get(set_index_url))
+    set_index_value =
+      set_index_html.css('div#maincontent .table-responsive tbody tr')[0]
+      .css('td')[1].text.gsub(',', '').to_f
+    entry.set_index = set_index_value
+
     entry.save!
   end
 end

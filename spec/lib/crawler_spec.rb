@@ -12,12 +12,17 @@ describe 'crawler:run' do
       "http://th.jobsdb.com/TH/EN/Search/FindJobs" \
         "?KeyOpt=COMPLEX&JSRV=1&RLRSF=1&JobCat=131&JSSRC=JSRSB"
     ).to_return(status: 200, body: jobs_db_tech_html)
+    stub_request(
+      :get,
+      "http://marketdata.set.or.th/mkt/sectorialindices.do"
+    ).to_return(status: 200, body: set_index_html)
   end
 
   it 'fetches and stores data' do
     expect{task.invoke}.to change{ Entry.count }.by 1
     expect(Entry.last.jobs_db_total).to eq 16500
     expect(Entry.last.jobs_db_tech).to eq 2136
+    expect(Entry.last.set_index).to eq 1492.95
   end
 end
 
@@ -58,5 +63,62 @@ def jobs_db_tech_html
         </div>
       </div>
     </html>
+  html
+end
+
+def set_index_html
+  <<-html
+  <div id="maincontent" class="col-lg-12">
+    <div class="row">
+      <div class="col-xs-12 col-md-12 col-lg-12">
+        <div class="table-responsive">
+          <table class="table-info">
+              <caption style="text-align: right;">
+                  <span class="set-color-gray set-color-graylight">* Market data provided for educational purpose or personal use only, not intended for trading purpose.</span><br>
+                  * Last Update 15 Jul 2016 22:59:57
+              </caption>
+              <thead>
+                <tr>
+                  <th>Index</th>
+                  <th>Last</th>
+                  <th>Change</th>
+                  <th>%Change</th>
+                  <th>High</th>
+                  <th>Low</th>
+                  <th>Volume<br>('000 Shares)</th>
+                  <th>Value<br>(M.Baht)</th>
+                </tr>
+            </thead>
+          <tbody>
+            <tr>
+              <td style="text-align: left;">
+              SET
+              </td>
+              <td>1,492.95</td>
+              <td><font style="color: green;">+3.31</font></td>
+              <td><font style="color: green;">+0.22</font></td>
+              <td>1,498.13</td>
+              <td>1,489.82</td>
+              <td>12,138,506</td>
+              <td>59,275.04</td>
+            </tr>
+            <tr>
+              <td style="text-align: left;">
+                <a href="/mkt/sectorquotation.do?sector=SET50&amp;langauge=en&amp;country=US">SET50</a>
+              </td>
+              <td>942.95</td>
+              <td><font style="color: green;">+0.20</font></td>
+              <td><font style="color: green;">+0.02</font></td>
+              <td>948.38</td>
+              <td>941.50</td>
+              <td>1,560,771</td>
+              <td>34,958.61</td>
+            </tr>
+          </tbody>
+          </table>
+        </div>
+      </div>
+    </div>
+  </div>
   html
 end
