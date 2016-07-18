@@ -16,6 +16,10 @@ describe 'crawler:run' do
       :get,
       "http://marketdata.set.or.th/mkt/sectorialindices.do"
     ).to_return(status: 200, body: set_index_html)
+    stub_request(
+      :get,
+      "http://www.jobnisit.com/en/jobs"
+    ).to_return(status: 200, body: job_nisit_html)
   end
 
   it 'fetches and stores data' do
@@ -23,6 +27,7 @@ describe 'crawler:run' do
     expect(Entry.last.jobs_db_total).to eq 16500
     expect(Entry.last.jobs_db_tech).to eq 2136
     expect(Entry.last.set_index).to eq 1492.95
+    expect(Entry.last.job_nisit_total).to eq 2207
   end
 end
 
@@ -120,5 +125,17 @@ def set_index_html
       </div>
     </div>
   </div>
+  html
+end
+
+def job_nisit_html
+  <<-html
+  <div style="float: left;width:100%; margin-bottom: -10px;">
+    <h2 class="th " style="padding-left: 15px;  ">
+    <span class="results-count" id="job_amount">
+          1 - 25 of 2207
+      </span><span class="th" style="font-size: 23px;"> jobs positions
+        </span></h2>
+    </div>
   html
 end

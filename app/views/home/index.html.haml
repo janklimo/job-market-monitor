@@ -8,6 +8,7 @@
             %th Date
             %th Jobs DB tech
             %th Jobs DB total
+            %th Jobnisit total
             %th SET Index
         %tbody
           - @entries.each_with_index do |entry, index|
@@ -20,5 +21,7 @@
                 = number_with_delimiter(entry.jobs_db_tech)
               %td
                 = number_with_delimiter(entry.jobs_db_total)
+              %td
+                = number_with_delimiter(entry.job_nisit_total)
               %td
                 = number_with_delimiter(entry.set_index)

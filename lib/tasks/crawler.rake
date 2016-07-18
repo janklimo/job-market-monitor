@@ -26,6 +26,12 @@ namespace :crawler do
       .css('td')[1].text.gsub(',', '').to_f
     entry.set_index = set_index_value
 
+    job_nisit_url = "http://www.jobnisit.com/en/jobs"
+    job_nisit_html = Nokogiri::HTML(RestClient.get(job_nisit_url))
+    job_nisit_value =
+      job_nisit_html.css('span.results-count')[0].text.match(/(?<=of\s)\d+/)[0]
+    entry.job_nisit_total = job_nisit_value
+
     entry.save!
   end
 end
