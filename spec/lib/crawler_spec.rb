@@ -20,6 +20,10 @@ describe 'crawler:run' do
       :get,
       "http://www.jobnisit.com/en/jobs"
     ).to_return(status: 200, body: job_nisit_html)
+    stub_request(
+      :post,
+      "http://www.jobnisit.com/en/jobs"
+    ).to_return(status: 200, body: job_nisit_tech_html)
   end
 
   it 'fetches and stores data' do
@@ -28,6 +32,25 @@ describe 'crawler:run' do
     expect(Entry.last.jobs_db_tech).to eq 2136
     expect(Entry.last.set_index).to eq 1492.95
     expect(Entry.last.job_nisit_total).to eq 2207
+    expect(Entry.last.job_nisit_tech).to eq 130
+  end
+
+  context 'jobnisit breaks' do
+    before do
+      stub_request(:get, "http://www.jobnisit.com/en/jobs")
+        .to_return(status: 500)
+      stub_request(:post, "http://www.jobnisit.com/en/jobs")
+        .to_return(status: 500)
+      @entry = create(:entry)
+    end
+    it 'saves the rest, Jobnisit equals value from previous day' do
+      expect{task.invoke}.to change{ Entry.count }.by 1
+      expect(Entry.last.jobs_db_total).to eq 16500
+      expect(Entry.last.jobs_db_tech).to eq 2136
+      expect(Entry.last.set_index).to eq 1492.95
+      expect(Entry.last.job_nisit_total).to eq @entry.job_nisit_total
+      expect(Entry.last.job_nisit_tech).to eq @entry.job_nisit_tech
+    end
   end
 end
 
@@ -134,6 +157,18 @@ def job_nisit_html
     <h2 class="th " style="padding-left: 15px;  ">
     <span class="results-count" id="job_amount">
           1 - 25 of 2207
+      </span><span class="th" style="font-size: 23px;"> jobs positions
+        </span></h2>
+    </div>
+  html
+end
+
+def job_nisit_tech_html
+  <<-html
+  <div style="float: left;width:100%; margin-bottom: -10px;">
+    <h2 class="th " style="padding-left: 15px;  ">
+    <span class="results-count" id="job_amount">
+          1 - 25 of 130
       </span><span class="th" style="font-size: 23px;"> jobs positions
         </span></h2>
     </div>
