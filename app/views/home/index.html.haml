@@ -8,6 +8,7 @@
             %th Date
             %th Jobs DB tech
             %th Jobs DB total
+            %th Jobnisit tech
             %th Jobnisit total
             %th SET Index
         %tbody
@@ -21,6 +22,8 @@
                 = number_with_delimiter(entry.jobs_db_tech)
               %td
                 = number_with_delimiter(entry.jobs_db_total)
+              %td
+                = number_with_delimiter(entry.job_nisit_tech)
               %td
                 = number_with_delimiter(entry.job_nisit_total)
               %td
